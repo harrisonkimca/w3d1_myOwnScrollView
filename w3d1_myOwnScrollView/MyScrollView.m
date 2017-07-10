@@ -29,22 +29,28 @@
     CGPoint translationInView = [self.panGesture translationInView:self];
     CGRect bounds = self.bounds;
     
-    bounds.origin.x = self.frame.origin.x - translationInView.x;
+    // setting new bounds.origin.x relative to frame.origin.x ...
+    //bounds.origin.x = self.frame.origin.x + translationInView.x;
+    // ...but just need to find new bounds.origin.x vs its original position
+    CGFloat newBoundsOriginX = bounds.origin.x - translationInView.x;
+    // x-axis so min would be zero
+    CGFloat minBoundsOriginX = 0.0;
+    // max is difference between width of the contentSize mins the width of the bounds
+    CGFloat maxBoundsOriginX = self.contentSize.width - bounds.size.width;
+    // new bounds.origin.x would be the max of these three
+    bounds.origin.x = fmaxf(minBoundsOriginX, fmin(newBoundsOriginX, maxBoundsOriginX));
     
-    bounds.origin.y = self.frame.origin.y - translationInView.y;
+    // same logic for y-axis
+    //bounds.origin.y = self.frame.origin.y + translationInView.y;
+    CGFloat newBoundsOriginY = bounds.origin.y - translationInView.y;
+    CGFloat minBoundsOriginY = 0.0;
+    CGFloat maxBoundsOriginY = self.contentSize.height - bounds.size.height;
+    bounds.origin.y = fmax(minBoundsOriginY, fmin(newBoundsOriginY, maxBoundsOriginY));
     
+    // reset to new bounds
     self.bounds = bounds;
-    
     // reset to zero
     [self.panGesture setTranslation:CGPointZero inView:self];
-    
-    
-    
-    //CGPoint newCenter = CGPointMake(oldCenter.x + translationInView.x, oldCenter.y + translationInView.y);
-    //sender.view.center = newCenter;
-    
-    
-    //self.bounds = CGRectMake(self.frame.origin.x, self.frame.origin.y + 100, self.bounds.size.height, self.bounds.size.width);
     
 }
 
